@@ -8,24 +8,22 @@ import signal
 import sys
 
 
-class AudioRecorder:
-    def __init__(self, speech_recognition_model):
+class AudioTranscriber:
+    def __init__(self, speech_recognition_model, transcription_callback=None):
         self.fs = 44100
         self.recording = []
         self.is_recording = False
         self.stream = None
-        self.speech_recognition_model = speech_recognition_model
-        self.model = self.load_model(speech_recognition_model)
+        self.model = SpeechRecognitionModel(speech_recognition_model)
         self.listener = None
         self._initialize_signal_handler()
+        self.transcription_callback = transcription_callback
 
-    def load_model(self, model_name):
-        model = SpeechRecognitionModel(model_name)
-        return model
+    def create_stream(self):
+        return sd.InputStream(samplerate=self.fs, channels=1, callback=self.audio_callback)
 
     def transcribe(self, audio_file):
         transcriptions = self.model.transcribe([audio_file])
-        # only return the first transcription
         return transcriptions[0]["transcription"]
 
     def audio_callback(self, indata, frames, time, status):
@@ -37,16 +35,16 @@ class AudioRecorder:
             if not self.is_recording:
                 print("Recording started...")
                 self.is_recording = True
-                self.stream = sd.InputStream(samplerate=self.fs, channels=1, callback=self.audio_callback)
+                self.stream = self.create_stream()
                 self.stream.start()
             else:
                 self.stop_recording()
         elif key == keyboard.Key.esc:
             self.stop_recording()
-            self.listener.stop()
             return False
 
     def stop_recording(self):
+        transcription = None
         if self.is_recording:
             self.is_recording = False
             self.stream.stop()
@@ -56,9 +54,17 @@ class AudioRecorder:
             write(output_file, self.fs, audio_data)
             print("Recording stopped.")
             transcription = self.transcribe(output_file)
-            print(f'Transcription: {transcription}')
             os.remove(output_file)
-            return transcription
+            if self.transcription_callback:
+                self.transcription_callback(transcription)
+
+            # Clear the recording data
+            self.recording = []
+
+        if self.listener:
+            self.listener.stop()
+        return transcription
+
 
     def init(self):
         with keyboard.Listener(on_press=self.on_press) as self.listener:
@@ -68,8 +74,6 @@ class AudioRecorder:
         signal.signal(signal.SIGINT, self._signal_handler)
 
     def _signal_handler(self, sig, frame):
-        print("\nClosing AudioRecorder...")
+        print("\nClosing AudioTranscriber...")
         self.stop_recording()
-        if self.listener:
-            self.listener.stop()
         sys.exit(0)

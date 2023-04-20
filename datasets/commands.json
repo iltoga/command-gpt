@@ -1,0 +1,35 @@
+{
+    "process_control_commands": [
+      {
+        "command": ["open", "-a", "{application name}.app"],
+        "description": "Open the {application name} application",
+        "voice_input": ["open {application name}", "launch {application name}", "open {application name} app", "open {application name} application"]
+      },
+      {
+        "command": ["osascript", "-e", "quit app \"{application name}.app\" "],
+        "description": "Close the {application name} application",
+        "voice_input": ["close {application name}", "quit {application name}", "stop {application name}", "close {application name} app", "close {application name} application"]
+      },
+      {
+        "command": ["ping", "-c", "5", "google.com"],
+        "description": "Send 5 ICMP packets to Google's server to check connectivity",
+        "voice_input": ["check internet connection", "ping {website or domain name}", "ping google"]
+      },
+      {
+        "command": ["docker", "start", "{container_name}"],
+        "description": "Start a Docker container with the specified name",
+        "voice_input": ["start docker {container_name}", "run docker {container_name}"]
+      },
+      {
+        "command": ["pmset", "displaysleepnow"],
+        "description": "Lock the computer screen",
+        "voice_input": ["lock screen", "put computer to sleep"]
+      },
+      {
+        "command": ["bash", "script_name.sh"],
+        "description": "Run a bash script with the specified name",
+        "voice_input": ["run bash script script_name", "execute script_name"]
+      }
+    ]
+  }
+  

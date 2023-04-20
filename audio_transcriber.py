@@ -61,12 +61,14 @@ class AudioTranscriber:
             # Clear the recording data
             self.recording = []
 
+        # Stop the listener: we need to do this because the listener is running in a separate thread 
+        # and it would be difficult to get the return value in the callback function
         if self.listener:
             self.listener.stop()
         return transcription
 
 
-    def init(self):
+    def start(self):
         with keyboard.Listener(on_press=self.on_press) as self.listener:
             self.listener.join()
 

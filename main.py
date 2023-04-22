@@ -50,6 +50,7 @@ if __name__ == "__main__":
     command_parser_model_ggml = os.getenv("COMMAND_PARSER_MODEL_GGML") or "ggjt-model.bin"
     transcription_queue = queue.Queue()
     transcription_event = threading.Event()
+    
     audio_transcriver = AudioTranscriber(
         speech_recognition_model=speech_recognition_model, 
         transcription_callback=handle_transcription,
@@ -87,6 +88,9 @@ if __name__ == "__main__":
         # Match the transcripted command to a generic command (command template)
         command, description = matcher.match_voice_input(voice_input=best_match_command)
         # Compile the command template
+        if command is None:
+            print(f"Command not found in the dataset: {best_match_command}")
+            continue
         command = ",".join(command)
         # STEF cmdToExecute = command_parser.GenerateText(command, best_match_application, prompt_template="parse_command")
         cmdToExecute = Template(command).render(application_name=best_match_application)

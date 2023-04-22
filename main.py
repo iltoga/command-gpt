@@ -62,8 +62,6 @@ if __name__ == "__main__":
     matcher = CommandMatcher()
     corpus = matcher.load_voice_inputs()
 
-    # STEF command_parser = CommandParser(model_name=command_parser_model_ggml, repo_id=command_parser_model)
-
     while True:
         audio_transcriver.start()
 
@@ -92,7 +90,6 @@ if __name__ == "__main__":
             print(f"Command not found in the dataset: {best_match_command}")
             continue
         command = ",".join(command)
-        # STEF cmdToExecute = command_parser.GenerateText(command, best_match_application, prompt_template="parse_command")
         cmdToExecute = Template(command).render(application_name=best_match_application)
         # split the command to a list
         cmdToExecute = cmdToExecute.split(",")

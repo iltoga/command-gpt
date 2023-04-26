@@ -4,7 +4,6 @@ sys.path.append("..")
 
 from pyagents import AudioTranscriber
 from pyagents import CosineSimilarity
-from pyagents import CommandParser
 from command_matcher import CommandMatcher
 import dotenv
 import os

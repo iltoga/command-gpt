@@ -1,0 +1,5 @@
+# requirements.txt
+
+dotenv==0.19.2
+pyagents==0.5
+jinja2==3.1.2
